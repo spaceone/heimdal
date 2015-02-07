@@ -80,7 +80,7 @@ struct tests aes_cfb_tests[] = {
       "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
       16,
       "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
-      "\x66\xe9\x4b\xd4\xef\x8a\x2c\x3b\x88\x4c\xfa\x59\xca\x34\x2b\x2e",
+      "\x66\x16\xf9\x2e\x42\xa8\xf1\x1a\x91\x16\x68\x57\x8e\xc3\xaa\x0f",
       NULL
     }
 };
@@ -353,10 +353,8 @@ main(int argc, char **argv)
 #ifdef __APPLE__
     for (i = 0; i < sizeof(aes_tests)/sizeof(aes_tests[0]); i++)
 	ret += test_cipher(i, EVP_cc_aes_256_cbc(), &aes_tests[i]);
-#if 0
     for (i = 0; i < sizeof(aes_cfb_tests)/sizeof(aes_cfb_tests[0]); i++)
 	ret += test_cipher(i, EVP_cc_aes_128_cfb8(), &aes_cfb_tests[i]);
-#endif
     for (i = 0; i < sizeof(rc2_40_tests)/sizeof(rc2_40_tests[0]); i++)
 	ret += test_cipher(i, EVP_cc_rc2_40_cbc(), &rc2_40_tests[i]);
     for (i = 0; i < sizeof(des_ede3_tests)/sizeof(des_ede3_tests[0]); i++)
