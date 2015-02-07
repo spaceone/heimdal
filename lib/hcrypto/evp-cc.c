@@ -355,8 +355,6 @@ cc_aes_cfb8_init(EVP_CIPHER_CTX *ctx,
 		int encp)
 {
     struct cc_key *cc = ctx->cipher_data;
-    if (iv)
-        memcpy(ctx->iv, iv, ctx->cipher->iv_len);
     return init_cc_key(encp, ctx->flags, kCCAlgorithmAES128,
 		       key, ctx->cipher->key_len, NULL, &cc->href);
 }
