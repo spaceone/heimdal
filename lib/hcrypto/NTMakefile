@@ -33,9 +33,16 @@ SUBDIRS=libtommath
 
 RELDIR=lib\hcrypto
 
-intcflags=-DKRB5 -DASN1_LIB -I$(HCRYPTOINCLUDEDIR) -DUSE_HCRYPTO_LTM=1
-
 !include ../../windows/NTMakefile.w32
+
+HCRYPTOINCLUDEDIR = $(INCDIR)\hcrypto
+
+HEIMBASEDIR = $(SRC)\lib\base
+
+HX509REFDIR = $(SRC)\lib\hx509\ref
+
+intcflags=-DKRB5 -DASN1_LIB -I$(HCRYPTOINCLUDEDIR) -DUSE_HCRYPTO_LTM=1 \
+	-I$(HEIMBASEDIR) -I$(HX509REFDIR)
 
 # Do dependencies first
 
@@ -46,8 +53,6 @@ clean:: clean-subdirs
 test:: test-subdirs
 
 # Include files
-
-HCRYPTOINCLUDEDIR=$(INCDIR)\hcrypto
 
 INCFILES=	\
 	$(HCRYPTOINCLUDEDIR)\aes.h	\
@@ -62,6 +67,7 @@ INCFILES=	\
 	$(HCRYPTOINCLUDEDIR)\evp.h	\
 	$(HCRYPTOINCLUDEDIR)\evp-hcrypto.h	\
 	$(HCRYPTOINCLUDEDIR)\evp-cc.h	\
+	$(HCRYPTOINCLUDEDIR)\evp-pkcs11.h	\
 	$(HCRYPTOINCLUDEDIR)\evp-wincng.h	\
 	$(HCRYPTOINCLUDEDIR)\evp-w32.h	\
 	$(HCRYPTOINCLUDEDIR)\hmac.h	\
@@ -105,6 +111,7 @@ libhcrypto_OBJs = 			\
 	$(OBJ)\evp.obj			\
 	$(OBJ)\evp-hcrypto.obj		\
 	$(OBJ)\evp-cc.obj		\
+	$(OBJ)\evp-pkcs11.obj		\
 	$(OBJ)\evp-wincng.obj		\
 	$(OBJ)\evp-w32.obj		\
 	$(OBJ)\engine.obj		\
