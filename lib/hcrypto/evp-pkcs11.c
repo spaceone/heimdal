@@ -78,60 +78,65 @@ struct pkcs11_md_ctx {
     CK_SESSION_HANDLE hSession;
 };
 
+static void
+p11_module_init_once(void *context)
+{
+    CK_RV rv;
+    CK_FUNCTION_LIST_PTR module;
+    CK_RV (*C_GetFunctionList_fn)(CK_FUNCTION_LIST_PTR_PTR);
+    void *handle = NULL;
+
+    if (!issuid()) {
+        char *pkcs11ModulePath = getenv("PKCS11_MODULE_PATH");
+        if (pkcs11ModulePath != NULL) {
+            handle = dlopen(pkcs11ModulePath, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
+            if (handle == NULL)
+                fprintf(stderr, "p11_module_init(%s): %s\n", pkcs11ModulePath, dlerror());
+        }
+    }
+#ifdef PKCS11_MODULE_PATH
+    if (handle == NULL) {
+        handle = dlopen(PKCS11_MODULE_PATH, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
+        if (handle == NULL)
+            fprintf(stderr, "p11_module_init(%s): %s\n", PKCS11_MODULE_PATH, dlerror());
+    }
+#endif
+    if (handle == NULL) {
+        rv = CKR_LIBRARY_LOAD_FAILED;
+        goto cleanup;
+    }
+
+    C_GetFunctionList_fn = (CK_RV (*)(CK_FUNCTION_LIST_PTR_PTR))
+                           dlsym(handle, "C_GetFunctionList");
+    if (C_GetFunctionList_fn == NULL) {
+        rv = CKR_LIBRARY_LOAD_FAILED;
+        goto cleanup;
+    }
+
+    rv = C_GetFunctionList_fn(&module);
+    if (rv != CKR_OK)
+        goto cleanup;
+
+    rv = module->C_Initialize(NULL);
+    if (rv == CKR_CRYPTOKI_ALREADY_INITIALIZED)
+        rv = CKR_OK;
+    if (rv == CKR_OK)
+        *((CK_FUNCTION_LIST_PTR_PTR)context) = module;
+
+cleanup:
+    if (handle != NULL && p11_module == NULL)
+        dlclose(handle);
+    /* else leak handle */
+}
+
 static CK_RV
 p11_module_init(void)
 {
-    CK_RV rv = CKR_OK;
+    static heim_base_once_t init_module = HEIM_BASE_ONCE_INIT;
 
-    if (p11_module == NULL) {
-        CK_RV (*C_GetFunctionList_fn)(CK_FUNCTION_LIST_PTR_PTR);
-        CK_FUNCTION_LIST_PTR module;
-        void *handle = NULL;
+    heim_base_once_f(&init_module, &p11_module, p11_module_init_once);
 
-        if (!issuid()) {
-            char *pkcs11ModulePath = getenv("PKCS11_MODULE_PATH");
-            if (pkcs11ModulePath != NULL) {
-                handle = dlopen(pkcs11ModulePath, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
-                if (handle == NULL)
-                    fprintf(stderr, "p11_module_init(%s): %s\n", pkcs11ModulePath, dlerror());
-            }
-        }
-#ifdef PKCS11_MODULE_PATH
-        if (handle == NULL) {
-            handle = dlopen(PKCS11_MODULE_PATH, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
-            if (handle == NULL)
-                fprintf(stderr, "p11_module_init(%s): %s\n", PKCS11_MODULE_PATH, dlerror());
-        }
-#endif
-        if (handle == NULL) {
-            rv = CKR_LIBRARY_LOAD_FAILED;
-            goto cleanup;
-        }
-
-        C_GetFunctionList_fn = (CK_RV (*)(CK_FUNCTION_LIST_PTR_PTR))
-                               dlsym(handle, "C_GetFunctionList");
-        if (C_GetFunctionList_fn == NULL) {
-            rv = CKR_LIBRARY_LOAD_FAILED;
-            goto cleanup;
-        }
-
-        rv = C_GetFunctionList_fn(&module);
-        if (rv != CKR_OK)
-            goto cleanup;
-
-        rv = module->C_Initialize(NULL);
-        if (rv == CKR_CRYPTOKI_ALREADY_INITIALIZED)
-            rv = CKR_OK;
-        if (rv == CKR_OK)
-            (void)heim_base_exchange_pointer(&p11_module, module);
-
-cleanup:
-        if (handle != NULL && p11_module == NULL)
-            dlclose(handle);
-        /* else leak handle */
-    }
-
-    return rv;
+    return p11_module != NULL ? CKR_OK : CKR_LIBRARY_LOAD_FAILED;
 }
 
 static CK_RV

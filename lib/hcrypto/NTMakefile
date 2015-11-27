@@ -172,63 +172,63 @@ test-binaries:				\
 	$(OBJ)\test_rand.exe		\
 	$(OBJ)\test_crypto.sh
 
-$(OBJ)\destest.exe: $(OBJ)\destest.obj $(TESTLIB) $(LIBROKEN)
+$(OBJ)\destest.exe: $(OBJ)\destest.obj $(TESTLIB) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\example_evp_cipher.exe: $(OBJ)\example_evp_cipher.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\example_evp_cipher.exe: $(OBJ)\example_evp_cipher.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\mdtest.exe: $(OBJ)\mdtest.obj $(LIBHEIMDAL) $(LIBROKEN) $(OBJ)\sha512.obj
+$(OBJ)\mdtest.exe: $(OBJ)\mdtest.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(OBJ)\sha512.obj
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\rc2test.exe: $(OBJ)\rc2test.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\rc2test.exe: $(OBJ)\rc2test.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\rctest.exe: $(OBJ)\rctest.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\rctest.exe: $(OBJ)\rctest.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_bn.exe: $(OBJ)\test_bn.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\test_bn.exe: $(OBJ)\test_bn.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_bulk.exe: $(OBJ)\test_bulk.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_bulk.exe: $(OBJ)\test_bulk.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_cipher.exe: $(OBJ)\test_cipher.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_cipher.exe: $(OBJ)\test_cipher.obj $(TESTLIB) $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_engine_dso.exe: $(OBJ)\test_engine_dso.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_engine_dso.exe: $(OBJ)\test_engine_dso.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_hmac.exe: $(OBJ)\test_hmac.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\test_hmac.exe: $(OBJ)\test_hmac.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_pkcs5.exe: $(OBJ)\test_pkcs5.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\test_pkcs5.exe: $(OBJ)\test_pkcs5.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_pkcs12.exe: $(OBJ)\test_pkcs12.obj $(LIBHEIMDAL) $(LIBROKEN)
+$(OBJ)\test_pkcs12.exe: $(OBJ)\test_pkcs12.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_rsa.exe: $(OBJ)\test_rsa.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_rsa.exe: $(OBJ)\test_rsa.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_dh.exe: $(OBJ)\test_dh.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_dh.exe: $(OBJ)\test_dh.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
-$(OBJ)\test_rand.exe: $(OBJ)\test_rand.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBVERS)
+$(OBJ)\test_rand.exe: $(OBJ)\test_rand.obj $(LIBHEIMDAL) $(LIBROKEN) $(LIBHEIMBASE) $(LIBVERS)
 	$(EXECONLINK)
 	$(EXEPREP_NODIST)
 
