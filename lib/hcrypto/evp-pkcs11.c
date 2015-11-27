@@ -175,6 +175,14 @@ p11_session_init(CK_MECHANISM_TYPE mechanismType, CK_SESSION_HANDLE_PTR phSessio
     if (rv != CKR_OK)
         goto cleanup;
 
+    /*
+     * Note that this approach of using the first slot that supports the desired
+     * mechanism may not always be what the user wants (for example it may prefer
+     * software to hardware crypto). We're going to assume that this code will be
+     * principally used on Solaris (which has a meta-slot provider that sorts by
+     * hardware first) or in situations where the user can configure the slots in
+     * order of provider preference. In the future we should make this configurable.
+     */
     for (i = 0; i < ulSlotCount; i++) {
         rv = p11_module->C_GetMechanismInfo(pSlotList[i], mechanismType, &info);
         if (rv == CKR_OK)
