@@ -138,7 +138,6 @@ AES_SHA2_PRF(krb5_context context,
     krb5_error_code ret;
     struct _krb5_key_data kd;
     struct _krb5_checksum_type *ct;
-    struct _krb5_key_type *kt;
     Checksum result;
 
     kd.key = NULL;
@@ -150,10 +149,9 @@ AES_SHA2_PRF(krb5_context context,
 	return ret;
 
     ct = crypto->et->keyed_checksum;
-    kt = crypto->et->keytype;
 
-    /* PRF is truncated to key length, not default checksum length */
-    ret = krb5_data_alloc(&result.checksum, kt->size);
+    /* PRF is untruncated (double length) HMAC */
+    ret = krb5_data_alloc(&result.checksum, 2 * ct->checksumsize);
     if (ret) {
 	krb5_free_keyblock(context, kd.key);
 	return ret;
