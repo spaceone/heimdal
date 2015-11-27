@@ -32,8 +32,6 @@
 
 #include "config.h"
 
-#include <baselocl.h>
-
 #include <assert.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -52,6 +50,9 @@
 #else
 #error PKCS11 support requires dlfcn.h
 #endif
+
+#include <roken.h>
+#include <heimbase.h>
 
 #include <evp.h>
 #include <evp-hcrypto.h>
