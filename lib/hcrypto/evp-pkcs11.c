@@ -420,20 +420,26 @@ p11_md_cleanup(EVP_MD_CTX *ctx)
             return NULL;                                                \
     }                                                                   \
                                                                         \
+    static void                                                         \
+    pkcs11_hcrypto_##name##_init_once(void *context)                    \
+    {                                                                   \
+        const EVP_CIPHER *cipher;                                       \
+                                                                        \
+        cipher = hc_EVP_pkcs11_ ##name();                               \
+        if (cipher == NULL)                                             \
+            cipher = hc_EVP_hcrypto_ ##name();                          \
+                                                                        \
+        *((const EVP_CIPHER **)context) = cipher;                       \
+    }                                                                   \
+                                                                        \
     const EVP_CIPHER *                                                  \
     hc_EVP_pkcs11_hcrypto_##name(void)                                  \
     {                                                                   \
         static const EVP_CIPHER *__cipher;                              \
+        static heim_base_once_t __init = HEIM_BASE_ONCE_INIT;           \
                                                                         \
-        if (__cipher == NULL) {                                         \
-            const EVP_CIPHER *cipher;                                   \
-                                                                        \
-            cipher = hc_EVP_pkcs11_ ##name();                           \
-            if (cipher == NULL)                                         \
-                cipher = hc_EVP_hcrypto_ ##name();                      \
-                                                                        \
-            (void)heim_base_exchange_pointer(&__cipher, cipher);        \
-        }                                                               \
+        heim_base_once_f(&__init, &__cipher,                            \
+                         pkcs11_hcrypto_##name##_init_once);            \
                                                                         \
         return __cipher;                                                \
     }
@@ -464,20 +470,26 @@ p11_md_cleanup(EVP_MD_CTX *ctx)
             return NULL;                                                \
     }                                                                   \
                                                                         \
+    static void                                                         \
+    pkcs11_hcrypto_##name##_init_once(void *context)                    \
+    {                                                                   \
+        const EVP_MD *md;                                               \
+                                                                        \
+        md = hc_EVP_pkcs11_ ##name();                                   \
+        if (md == NULL)                                                 \
+            md = hc_EVP_hcrypto_ ##name();                              \
+                                                                        \
+        *((const EVP_MD **)context) = md;                               \
+    }                                                                   \
+                                                                        \
     const EVP_MD *                                                      \
     hc_EVP_pkcs11_hcrypto_##name(void)                                  \
     {                                                                   \
         static const EVP_MD *__md;                                      \
+        static heim_base_once_t __init = HEIM_BASE_ONCE_INIT;           \
                                                                         \
-        if (__md == NULL) {                                             \
-            const EVP_MD *md;                                           \
-                                                                        \
-            md = hc_EVP_pkcs11_ ##name();                               \
-            if (md == NULL)                                             \
-                md = hc_EVP_hcrypto_ ##name();                          \
-                                                                        \
-            (void)heim_base_exchange_pointer(&__md, md);                \
-        }                                                               \
+        heim_base_once_f(&__init, &__md,                                \
+                         pkcs11_hcrypto_##name##_init_once);            \
                                                                         \
         return __md;                                                    \
     }
