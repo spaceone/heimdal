@@ -62,6 +62,27 @@ struct {
     char *key;
 } keys[] = {
     {
+	"password",
+	"\x10\xDF\x9D\xD7\x83\xE5\xBC\x8A\xCE\xA1\x73\x0E\x74\x35\x5F\x61" "ATHENA.MIT.EDUraeburn",
+	37,
+	32768,
+	KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128,
+	16,
+	NULL,
+	"\x08\x9B\xCA\x48\xB1\x05\xEA\x6E\xA7\x7C\xA5\xD2\xF3\x9D\xC5\xE7"
+    },
+    {
+	"password",
+	"\x10\xDF\x9D\xD7\x83\xE5\xBC\x8A\xCE\xA1\x73\x0E\x74\x35\x5F\x61" "ATHENA.MIT.EDUraeburn",
+	37,
+	32768,
+	KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192,
+	32,
+	NULL,
+	"\x45\xBD\x80\x6D\xBF\x6A\x83\x3A\x9C\xFF\xC1\xC9\x45\x89\xA2\x22"
+	"\x36\x7A\x79\xBC\x21\xC4\x13\x71\x89\x06\xE9\xF5\x78\xA7\x84\x67"
+    },
+    {
 	"password", "ATHENA.MIT.EDUraeburn", -1,
 	1,
 	ETYPE_AES128_CTS_HMAC_SHA1_96, 16,
@@ -160,7 +181,6 @@ struct {
 	"\x1a\x8b\x4d\x28\x26\x01\xdb\x3b\x36\xbe\x92\x46\x91\x5e\xc8\x2a",
 	"\xd7\x8c\x5c\x9c\xb8\x72\xa8\xc9\xda\xd4\x69\x7f\x0b\xb5\xb2\xd2"
 	"\x14\x96\xc8\x2b\xeb\x2c\xae\xda\x21\x12\xfc\xee\xa0\x57\x40\x1b"
-
     },
     {
 	"\xf0\x9d\x84\x9e" /* g-clef */, "EXAMPLE.COMpianist", -1,
@@ -225,10 +245,10 @@ string_to_key_test(krb5_context context)
 	    if (keys[i].keylen > sizeof(keyout))
 		abort();
 
-	    PKCS5_PBKDF2_HMAC_SHA1(password.data, password.length,
-				   salt.saltvalue.data, salt.saltvalue.length,
-				   keys[i].iterations,
-				   keys[i].keylen, keyout);
+	    PKCS5_PBKDF2_HMAC(password.data, password.length,
+			      salt.saltvalue.data, salt.saltvalue.length,
+			      keys[i].iterations, EVP_sha1(),
+			      keys[i].keylen, keyout);
 
 	    if (memcmp(keyout, keys[i].pbkdf2, keys[i].keylen) != 0) {
 		krb5_warnx(context, "%d: pbkdf2", i);
@@ -480,7 +500,7 @@ krb_checksum_iov(krb5_context context,
 		 unsigned usage,
 		 krb5_data *plain)
 {
-    krb5_crypto_iov iov[4];
+    krb5_crypto_iov iov[3];
     int ret;
     char *p;
     size_t len;
@@ -559,7 +579,6 @@ krb_enc_mit(krb5_context context,
     return 0;
 }
 
-
 struct {
     krb5_enctype enctype;
     unsigned usage;
@@ -582,9 +601,19 @@ struct {
 	"\x6f\x9f\xf4\xd5\xbe\x5d\x59\x97\x44\xd8\x47\xcd",
 	16,
 	"\x54\x68\x69\x73\x20\x69\x73\x20\x61\x20\x74\x65\x73\x74\x2e\x0a"
+    },
+    {
+	KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128,
+	2,
+	16,
+	"\x37\x05\xD9\x60\x80\xC1\x77\x28\xA0\xE8\x00\xEA\xB6\xE0\xD2\x3C",
+	32,
+	"\xEF\x85\xFB\x89\x0B\xB8\x47\x2F\x4D\xAB\x20\x39\x4D\xCA\x78\x1D"
+	"\xAD\x87\x7E\xDA\x39\xD5\x0C\x87\x0C\x0D\x5A\x0A\x8E\x48\xC7\x18",
+	0,
+	""
     }
 };
-
 
 static int
 krb_enc_test(krb5_context context)
@@ -638,9 +667,8 @@ krb_enc_test(krb5_context context)
 }
 
 static int
-iov_test(krb5_context context)
+iov_test(krb5_context context, krb5_enctype enctype)
 {
-    krb5_enctype enctype = KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96;
     krb5_error_code ret;
     krb5_crypto crypto;
     krb5_keyblock key;
@@ -865,7 +893,9 @@ main(int argc, char **argv)
 
     val |= krb_enc_test(context);
     val |= random_to_key(context);
-    val |= iov_test(context);
+    val |= iov_test(context, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96);
+    val |= iov_test(context, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128);
+    val |= iov_test(context, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192);
 
     if (verbose && val == 0)
 	printf("all ok\n");
