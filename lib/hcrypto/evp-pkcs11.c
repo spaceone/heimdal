@@ -364,8 +364,8 @@ p11_md_final(void *digest, EVP_MD_CTX *ctx)
 
     assert(p11_module != NULL);
 
-    rv = p11_module->C_DigestFinal(p11ctx->hSession, digest, &digestLen);
-    if (rv == CKR_BUFFER_TOO_SMALL)
+    rv = p11_module->C_DigestFinal(p11ctx->hSession, NULL, &digestLen);
+    if (rv == CKR_OK)
         rv = p11_module->C_DigestFinal(p11ctx->hSession, digest, &digestLen);
 
     return rv == CKR_OK;
