@@ -54,7 +54,7 @@
 #include <evp-hcrypto.h>
 #include <evp-pkcs11.h>
 
-#include "pkcs11.h"
+#include <ref/pkcs11.h>
 
 #if __sun && !defined(PKCS11_MODULE_PATH)
 # if _LP64

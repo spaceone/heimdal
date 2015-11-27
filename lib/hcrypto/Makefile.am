@@ -2,7 +2,7 @@
 
 include $(top_srcdir)/Makefile.am.common
 
-AM_CPPFLAGS += -I$(top_srcdir)/lib/base -I$(top_srcdir)/lib/hx509/ref \
+AM_CPPFLAGS += -I$(top_srcdir)/lib/base -I$(top_srcdir)/lib/hx509 \
         -I$(srcdir)/libtommath -DUSE_HCRYPTO_LTM=1
 
 lib_LTLIBRARIES = libhcrypto.la
