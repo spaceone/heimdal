@@ -88,6 +88,8 @@ static unsigned char *d;
 #define PROVIDER_USAGE "hcrypto|cc"
 #elif defined(WIN32)
 #define PROVIDER_USAGE "hcrypto|w32crypto"
+#elif __sun || defined(PKCS11_MODULE_PATH)
+#define PROVIDER_USAGE "hcrypto|pkcs11"
 #else
 #define PROVIDER_USAGE "hcrypto"
 #endif
