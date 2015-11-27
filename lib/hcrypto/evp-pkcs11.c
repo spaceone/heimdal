@@ -46,6 +46,9 @@
 #ifndef RTLD_GROUP
 #define RTLD_GROUP 0
 #endif
+#ifndef RTLD_NODELETE
+#define RTLD_NODELETE 0
+#endif
 #else
 #error PKCS11 support requires dlfcn.h
 #endif
@@ -89,14 +92,16 @@ p11_module_init_once(void *context)
     if (!issuid()) {
         char *pkcs11ModulePath = getenv("PKCS11_MODULE_PATH");
         if (pkcs11ModulePath != NULL) {
-            handle = dlopen(pkcs11ModulePath, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
+            handle = dlopen(pkcs11ModulePath, RTLD_LAZY | RTLD_LOCAL |
+                                              RTLD_GROUP | RTLD_NODELETE);
             if (handle == NULL)
                 fprintf(stderr, "p11_module_init(%s): %s\n", pkcs11ModulePath, dlerror());
         }
     }
 #ifdef PKCS11_MODULE_PATH
     if (handle == NULL) {
-        handle = dlopen(PKCS11_MODULE_PATH, RTLD_LAZY | RTLD_LOCAL | RTLD_GROUP);
+        handle = dlopen(PKCS11_MODULE_PATH, RTLD_LAZY | RTLD_LOCAL |
+                                            RTLD_GROUP | RTLD_NODELETE);
         if (handle == NULL)
             fprintf(stderr, "p11_module_init(%s): %s\n", PKCS11_MODULE_PATH, dlerror());
     }
