@@ -123,7 +123,7 @@ p11_module_init(void)
         if (rv == CKR_CRYPTOKI_ALREADY_INITIALIZED)
             rv = CKR_OK;
         if (rv == CKR_OK)
-            heim_base_exchange_pointer(&p11_module, module);
+            (void)heim_base_exchange_pointer(&p11_module, module);
 
 cleanup:
         if (handle != NULL && p11_module == NULL)
@@ -427,7 +427,7 @@ p11_md_cleanup(EVP_MD_CTX *ctx)
             if (cipher == NULL)                                         \
                 cipher = hc_EVP_hcrypto_ ##name();                      \
                                                                         \
-            heim_base_exchange_pointer(&__cipher, cipher);              \
+            (void)heim_base_exchange_pointer(&__cipher, cipher);        \
         }                                                               \
                                                                         \
         return __cipher;                                                \
@@ -471,7 +471,7 @@ p11_md_cleanup(EVP_MD_CTX *ctx)
             if (md == NULL)                                             \
                 md = hc_EVP_hcrypto_ ##name();                          \
                                                                         \
-            heim_base_exchange_pointer(&__md, md);                      \
+            (void)heim_base_exchange_pointer(&__md, md);                \
         }                                                               \
                                                                         \
         return __md;                                                    \
