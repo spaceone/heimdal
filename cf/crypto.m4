@@ -135,47 +135,21 @@ if test "$crypto_lib" = "unknown"; then
 
 fi
 
-if test "$openssl" = "yes"; then
-  AC_DEFINE([HAVE_OPENSSL], 1, [define to use openssl's libcrypto])
-fi
-AM_CONDITIONAL(HAVE_OPENSSL, test "$openssl" = yes)dnl
-
 AC_ARG_WITH(pkcs11-module,
                        AS_HELP_STRING([--with-pkcs11-module=path],
                                       [use PKCS11 module in path]),
                        [pkcs11_module="$withval"],
                        [])
 
-dnl
-dnl Solaris has an inbuilt PKCS#11 provider, use that if available
-dnl
-dnl if test "$pkcs11_module" = ""; then
-dnl   case "$CFLAGS" in
-dnl     *-m64*)
-dnl         isa=/64
-dnl         ;;
-dnl     *)
-dnl         ;;
-dnl   esac
-dnl
-dnl   case "$host" in
-dnl     *-*-solaris2.1[[0-9]])
-dnl         AC_CHECK_LIB(pkcs11, C_Initialize, [
-dnl                      pkcs11_module="/usr/lib$isa/libpkcs11.so" hcrypto_def_provider=pkcs11_hcrypto],
-dnl                      [], [])
-dnl         ;;
-dnl     *)
-dnl         ;;
-dnl   esac
-dnl fi
-dnl
-dnl if test "$hcrypto_def_provider" != ""; then
-dnl   CPPFLAGS="-DHCRYPTO_DEF_PROVIDER=$hcrypto_def_provider ${CPPFLAGS}"
-dnl fi
-
 if test "$pkcs11_module" != ""; then
   AC_DEFINE_UNQUOTED(PKCS11_MODULE_PATH, "$pkcs11_module", [path to PKCS11 module])
+  openssl=no
 fi
+
+if test "$openssl" = "yes"; then
+  AC_DEFINE([HAVE_OPENSSL], 1, [define to use openssl's libcrypto])
+fi
+AM_CONDITIONAL(HAVE_OPENSSL, test "$openssl" = yes)dnl
 
 AC_SUBST(DIR_hcrypto)
 AC_SUBST(INCLUDE_hcrypto)
